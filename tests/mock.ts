@@ -17,7 +17,11 @@ enum Role {
 
 async function basicInit(page: Page) {
     let loggedInUser: User | undefined;
-    const validUsers: Record<string, User> = { 'd@jwt.com': { id: '3', name: 'Kai Chen', email: 'd@jwt.com', password: 'a', roles: [{ role: Role.Diner }] } };
+    const validUsers: Record<string, User> = {
+      'd@jwt.com': {id: '3', name: 'Kai Chen', email: 'd@jwt.com', password: 'a', roles: [{ role: Role.Diner }] },
+      'f@jwt.com': {id: '2', name: 'fart nugget', email: 'f@jwt.com', password: 'f', roles: [{role: Role.Franchisee}]}
+      // TODO: I need to make sure that I add some extra stuff so that it logs them in as an frahcinsee
+    };
   
     // Authorize login for the given user
     await page.route('*/**/api/auth', async (route) => {
@@ -27,6 +31,7 @@ async function basicInit(page: Page) {
         await route.fulfill({ status: 401, json: { error: 'Unauthorized' } });
         return;
       }
+
       loggedInUser = validUsers[loginReq.email];
       const loginRes = {
         user: loggedInUser,

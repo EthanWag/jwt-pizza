@@ -12,15 +12,43 @@ enum Role {
     name: string;
     email: string;
     password: string;
-    roles: { role: Role }[];
+    roles: {}[];
   }
 
 async function basicInit(page: Page) {
     let loggedInUser: User | undefined;
+
+    // test users
     const validUsers: Record<string, User> = {
-      'd@jwt.com': {id: '3', name: 'Kai Chen', email: 'd@jwt.com', password: 'a', roles: [{ role: Role.Diner }] },
-      'f@jwt.com': {id: '2', name: 'fart nugget', email: 'f@jwt.com', password: 'f', roles: [{role: Role.Franchisee}]}
-      // TODO: I need to make sure that I add some extra stuff so that it logs them in as an frahcinsee
+      'd@jwt.com':
+      {
+        id: '3',
+        name: 'Kai Chen', 
+        email: 'd@jwt.com', 
+        password: 'a', 
+        roles: [
+          { 
+            role: Role.Diner 
+          }
+        ] 
+      },
+
+      'f@jwt.com': 
+      {
+        id: '2', 
+        name: 'fart nugget', 
+        email: 'f@jwt.com', 
+        password: 'f', 
+        roles: [
+          {
+            role: Role.Diner
+          },
+          {
+            objectId: 1,
+            role: Role.Franchisee
+          }
+        ]
+      }
     };
   
     // Authorize login for the given user
@@ -31,6 +59,8 @@ async function basicInit(page: Page) {
         await route.fulfill({ status: 401, json: { error: 'Unauthorized' } });
         return;
       }
+
+      // if the user is a diner, then we need to treat that output differently than we do with someone that is a franchisee
 
       loggedInUser = validUsers[loginReq.email];
       const loginRes = {
@@ -67,6 +97,38 @@ async function basicInit(page: Page) {
       ];
       expect(route.request().method()).toBe('GET');
       await route.fulfill({ json: menuRes });
+    });
+
+    // endpoint for getting a users franchises
+    await page.route(/\/api\/franchise\/\d+$/, async (route) => {
+      const myFranchiseRes = [
+          {
+              "id": 1,
+              "name": "pizzaPocket",
+              "admins": [
+                  {
+                      "id": 3,
+                      "name": "pizza franchisee",
+                      "email": "f@jwt.com"
+                  }
+              ],
+              "stores": [
+                  {
+                      "id": 1,
+                      "name": "SLC",
+                      "totalRevenue": 0.1204
+                  },
+                  {
+                      "id": 2,
+                      "name": "Chicago",
+                      "totalRevenue": 0.0304
+                  },
+              ]
+          }
+      ]
+
+      expect(route.request().method()).toBe('GET');
+      await route.fulfill({ json: myFranchiseRes });
     });
   
     // Standard franchises and stores
@@ -105,3 +167,13 @@ async function basicInit(page: Page) {
   }
 
 export default basicInit;
+
+
+
+/*
+
+
+
+
+
+*/

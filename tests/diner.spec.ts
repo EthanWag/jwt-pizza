@@ -42,3 +42,39 @@ test('purchase with login', async ({ page }) => {
   // Check balance
   await expect(page.getByText('0.008')).toBeVisible();
 });
+
+test('diner Dashboard shows past orders', async ({ page }) => {
+  await basicInit(page);
+  await page.getByRole('link', { name: 'Login' }).click();
+  await page.getByRole('textbox', { name: 'Email address' }).fill('d@jwt.com');
+  await page.getByRole('textbox', { name: 'Password' }).fill('a');
+  await page.getByRole('button', { name: 'Login' }).click();
+
+  await expect(page.getByRole('link', { name: 'KC' })).toBeVisible();
+
+  await page.getByRole('link', { name: 'KC' }).click();
+  await expect(page.getByRole('heading')).toContainText('Your pizza kitchen');
+  await expect(page.getByRole('main')).toContainText('diner');
+  await expect(page.getByRole('main')).toContainText('Kai Chen');
+});
+
+test('register a new user', async ({ page }) => {
+  await basicInit(page);
+  await page.getByRole('link', { name: 'register' }).click();
+  await page.getByRole('textbox', { name: 'Full name' }).fill('diner');
+  await page.getByRole('textbox', { name: 'Email address' }).fill('d@jwt.com');
+  await page.getByRole('textbox', { name: 'Password' }).fill('a');
+
+  await page.getByRole('button', { name: 'Register' }).click();
+});
+
+test('logout after login', async ({ page }) => {
+
+  await basicInit(page);
+  await page.getByRole('link', { name: 'Login' }).click();
+  await page.getByRole('textbox', { name: 'Email address' }).fill('d@jwt.com');
+  await page.getByRole('textbox', { name: 'Password' }).fill('a');
+  await page.getByRole('button', { name: 'Login' }).click();
+
+  await page.getByRole('link', { name: 'Logout' }).click();  
+});

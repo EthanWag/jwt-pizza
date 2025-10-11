@@ -82,6 +82,12 @@ class HttpPizzaService implements PizzaService {
     return this.callEndpoint('/api/order', 'POST', order);
   }
 
+  async updateUser(updatedUser: User): Promise<User> {
+    const { user, token } = await this.callEndpoint(`/api/user/${updatedUser.id}`, 'PUT', updatedUser);
+    localStorage.setItem('token', token);
+    return Promise.resolve(user);
+  }
+
   async verifyOrder(jwt: string): Promise<JWTPayload> {
     return this.callEndpoint(pizzaFactoryUrl + '/api/order/verify', 'POST', { jwt });
   }

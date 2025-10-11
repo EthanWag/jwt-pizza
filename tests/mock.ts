@@ -116,6 +116,19 @@ async function basicInit(page: Page) {
       await route.fulfill({ json: menuRes });
     });
 
+    await page.route(/\/api\/user\/\d+$/,async (route) => {
+
+      const res  = {
+        id: 'A chicken',
+        name: 'A chicken',
+        email: 'A chicken',
+        password: 'A chicken',
+        roles: 'A chicken',
+      }
+      expect(route.request().method()).toBe('PUT');
+      await route.fulfill({ json:res})
+    });
+
     // endpoint for getting a users franchises
     await page.route(/\/api\/franchise\/\d+$/, async (route) => {
       const myFranchiseRes = [

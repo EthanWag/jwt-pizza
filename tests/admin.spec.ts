@@ -1,19 +1,15 @@
 import { test, expect } from 'playwright-test-coverage';
 import basicInit from './mock';
+import { Page } from '@playwright/test';
 
 test('login as admin and view dashboard', async ({ page }) => {
     // set up the page and get to the admin screen
     await basicInit(page);
-    await page.getByRole('link', { name: 'Login' }).click();
-    await page.getByRole('textbox', { name: 'Email address' }).click();
-    await page.getByRole('textbox', { name: 'Email address' }).fill('a@jwt.com');
-    await page.getByRole('textbox', { name: 'Password' }).click();
-    await page.getByRole('textbox', { name: 'Password' }).fill('l');
-    await page.getByRole('button', { name: 'Login' }).click();
+    await loginAsAdmin(page);
 
     await page.getByRole('link', { name: 'Admin' }).click();
 
-    await expect(page.locator('h3')).toContainText('Franchises');
+    await expect(page.locator('h3').filter({ hasText: 'Franchises' })).toBeVisible();
     await expect(page.locator('tbody').filter({ hasText: 'LotaPizza' })).toContainText('LotaPizza');
     await expect(page.locator('tbody').filter({ hasText: 'PizzaCorp' })).toContainText('PizzaCorp');
     await expect(page.locator('tbody').filter({ hasText: 'topSpot' })).toContainText('topSpot');
@@ -26,12 +22,7 @@ test('login as admin and view dashboard', async ({ page }) => {
 test('closing a store', async ({ page }) => {
     // set up the page and get to the admin screen
     await basicInit(page);
-    await page.getByRole('link', { name: 'Login' }).click();
-    await page.getByRole('textbox', { name: 'Email address' }).click();
-    await page.getByRole('textbox', { name: 'Email address' }).fill('a@jwt.com');
-    await page.getByRole('textbox', { name: 'Password' }).click();
-    await page.getByRole('textbox', { name: 'Password' }).fill('l');
-    await page.getByRole('button', { name: 'Login' }).click();
+    await loginAsAdmin(page);
 
     await page.getByRole('link', { name: 'Admin' }).click();
 
@@ -43,12 +34,7 @@ test('closing a store', async ({ page }) => {
 
 test('create a franchise', async ({ page }) => {
     await basicInit(page);
-    await page.getByRole('link', { name: 'Login' }).click();
-    await page.getByRole('textbox', { name: 'Email address' }).click();
-    await page.getByRole('textbox', { name: 'Email address' }).fill('a@jwt.com');
-    await page.getByRole('textbox', { name: 'Password' }).click();
-    await page.getByRole('textbox', { name: 'Password' }).fill('l');
-    await page.getByRole('button', { name: 'Login' }).click();
+    await loginAsAdmin(page);
 
     await page.getByRole('link', { name: 'Admin' }).click();
     
@@ -63,23 +49,18 @@ test('create a franchise', async ({ page }) => {
 test('see admin table',async({ page }) => {
 
     await basicInit(page);
+    await loginAsAdmin(page);
+
+    await page.getByRole('link', { name: 'Admin' }).click();
+    
+    await expect(page.getByRole('heading', { name: 'Users' })).toBeVisible();
+});
+
+async function loginAsAdmin(page:Page){
     await page.getByRole('link', { name: 'Login' }).click();
     await page.getByRole('textbox', { name: 'Email address' }).click();
     await page.getByRole('textbox', { name: 'Email address' }).fill('a@jwt.com');
     await page.getByRole('textbox', { name: 'Password' }).click();
     await page.getByRole('textbox', { name: 'Password' }).fill('l');
     await page.getByRole('button', { name: 'Login' }).click();
-
-    await page.getByRole('link', { name: 'Admin' }).click();
-});
-
-
-// more tests here
-
-// do one of the filter, that seems pretty cool
-
-/*
-
-
-
-*/
+}

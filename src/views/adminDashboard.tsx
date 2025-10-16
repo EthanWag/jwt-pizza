@@ -29,7 +29,14 @@ export default function AdminDashboard(props: Props) {
   // so it is duplication but for now I don't care
   React.useEffect(() => {
     (async () => {
-      setUserList(await pizzaService.getUsers(userPage, 10,'*'))
+
+      const res = await pizzaService.getUsers(userPage, 10,'*')
+      if(res.users.length === 10){
+        res.more = true;
+      }else{
+        res.more = false;
+      }
+      setUserList(res);
     })();
   }, [props.user, userPage]);
 
@@ -52,6 +59,12 @@ export default function AdminDashboard(props: Props) {
   async function filterUsers() {
     setUserList(await pizzaService.getUsers(userPage, 10, filterUserRef.current?.value));
   }
+
+  async function deleteUser(user: User) {
+    await pizzaService.deleteUser(user);
+    setUserList(await pizzaService.getUsers(userPage, 10, undefined));
+  }
+
 
   let response = <NotFound />;
   if (Role.isRole(props.user, Role.Admin)) {
@@ -138,8 +151,6 @@ export default function AdminDashboard(props: Props) {
           <Button className="w-36 text-xs sm:text-sm sm:w-64" title="Add Franchise" onPress={createFranchise} />
         </div>
 
-
-
         <div className="text-start py-8 px-4 sm:px-6 lg:px-8">
           <h3 className="text-neutral-100 text-xl">Users</h3>
           <div className="bg-neutral-100 overflow-clip my-4">
@@ -168,7 +179,7 @@ export default function AdminDashboard(props: Props) {
                                 {user.roles?.map((o) => o.role).join(', ')}
                               </td>
                               <td className="px-6 py-1 whitespace-nowrap text-end text-sm font-medium">
-                                <button type="button" className="px-2 py-1 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-1 border-orange-400 text-orange-400  hover:border-orange-800 hover:text-orange-800" onClick={() => console.log(user)}>
+                                <button type="button" className="px-2 py-1 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-1 border-orange-400 text-orange-400  hover:border-orange-800 hover:text-orange-800" onClick={() => deleteUser(user)}>
                                   <TrashIcon />
                                   delete
                                 </button>
@@ -186,7 +197,7 @@ export default function AdminDashboard(props: Props) {
                             </button>
                           </td>
                           <td colSpan={4} className="text-end text-sm font-medium">
-                            <button className="w-12 p-1 text-sm font-semibold rounded-lg border border-transparent bg-white text-grey border-grey m-1 hover:bg-orange-200 disabled:bg-neutral-300 " onClick={() => setUserPage(userPage - 1)} disabled={userPage <= 0}>
+                            <button className="w-12 p-1 text-sm font-semibold rounded-lg border border-transparent bg-white text-grey border-grey m-1 hover:bg-orange-200 disabled:bg-neutral-300" onClick={() => setUserPage(userPage - 1)} disabled={userPage <= 0}>
                               «
                             </button>
                             <button className="w-12 p-1 text-sm font-semibold rounded-lg border border-transparent bg-white text-grey border-grey m-1 hover:bg-orange-200 disabled:bg-neutral-300" onClick={() => setUserPage(userPage + 1)} disabled={!userList.more}>

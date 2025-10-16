@@ -160,6 +160,32 @@ async function basicInit(page: Page) {
       expect(route.request().method()).toBe('GET');
       await route.fulfill({ json: myFranchiseRes });
     });
+
+    await page.route('**/*/api/ user', async (route) => {
+      const usersRes = {
+          users: [
+            {name: 'Taco',email:'taco@mars.com', id: '1', roles:[{role:Role.Diner}]},
+            {name: 'pizza boi',email:'fart@nugget.com', id: '2', roles:[{role:Role.Diner}]},
+            {name: 'dumb',email:'idiot@stupid.com', id: '3', roles:[{role:Role.Diner}]},
+            {name: 'Arthur Morgan',email:'A@Morgan.gov', id: '4', roles:[{role:Role.Franchisee}]},
+            {name: 'blue boi',email:'blue@blue.com', id: '5', roles:[{role:Role.Diner}]},
+            {name: 'red boi',email:'red@red.com', id: '6', roles:[{role:Role.Diner}]},
+            {name: 'yellow boi',email:'y@y.com', id: '7', roles:[{role:Role.Diner}]},
+            {name: 'Micah Bell',email:'m@bell.gov', id: '8', roles:[{role:Role.Franchisee}]},
+            {name: 'aaaaa',email:'a@a.a', id: '9', roles:[{role:Role.Diner}]},
+            {name: 'bbbbb',email:'b@b.b', id: '10', roles:[{role:Role.Diner}]},
+            {name: 'ccccc',email:'c@c.c', id: '11', roles:[{role:Role.Diner}]},
+            {name: 'ddddd',email:'d@d.d', id: '12', roles:[{role:Role.Diner}]},
+            {name: 'eeeee',email:'e@e.e', id: '13', roles:[{role:Role.Diner}]},
+            {name: 'fffff',email:'f@f.f', id: '14', roles:[{role:Role.Diner}]},
+            {name: 'ggggg',email:'g@g.g', id: '15', roles:[{role:Role.Diner}]},
+            {name: 'hhhhh',email:'h@h.h', id: '16', roles:[{role:Role.Diner}]},
+          ]
+        };
+
+      expect(route.request().method()).toBe('GET');
+      await route.fulfill({ json: usersRes });
+    });
   
     // Standard franchises and stores
     await page.route(/\/api\/franchise(\?.*)?$/, async (route) => {

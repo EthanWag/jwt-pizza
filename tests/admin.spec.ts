@@ -60,6 +60,19 @@ test('create a franchise', async ({ page }) => {
     await page.getByRole('textbox', { name: 'franchisee admin email' }).fill('s@pwd.com');
 });
 
+test('see admin table',async({ page }) => {
+
+    await basicInit(page);
+    await page.getByRole('link', { name: 'Login' }).click();
+    await page.getByRole('textbox', { name: 'Email address' }).click();
+    await page.getByRole('textbox', { name: 'Email address' }).fill('a@jwt.com');
+    await page.getByRole('textbox', { name: 'Password' }).click();
+    await page.getByRole('textbox', { name: 'Password' }).fill('l');
+    await page.getByRole('button', { name: 'Login' }).click();
+
+    await page.getByRole('link', { name: 'Admin' }).click();
+});
+
 
 // more tests here
 

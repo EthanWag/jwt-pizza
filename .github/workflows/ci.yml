@@ -67,6 +67,12 @@ jobs:
         with:
           name: package
           path: dist/
+
+      - name: Extract artifact
+        run: |
+          cd dist
+          tar -xf artifact.tar
+          rm artifact.tar
   
       - name: Push to AWS S3
         run: |
